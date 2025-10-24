@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from routes.driving_route import driving_bp
 from routes.external_route import external_bp
+from routes.optimal_path_route import optimal_path_bp
 
 
 def create_app() -> Flask:
@@ -15,6 +16,7 @@ def create_app() -> Flask:
 	# Register blueprints
 	app.register_blueprint(driving_bp, url_prefix="/api/driving")
 	app.register_blueprint(external_bp, url_prefix="/api/external")
+	app.register_blueprint(optimal_path_bp, url_prefix="/api/optimal-path")
 
 	@app.route("/")
 	def root():
