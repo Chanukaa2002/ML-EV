@@ -221,22 +221,26 @@
                 <div class="grid grid-cols-2">
                     <div class="form-group">
                         <label class="form-label">Average Speed (km/h)</label>
-                        <input type="number" id="avg-speed" class="form-control" min="0" max="200" value="60" required>
+                        <input type="number" id="avg-speed" class="form-control" min="0" max="200" value="45" required>
+                        <small class="text-muted">35-50 = Eco, 50-70 = Normal, 70+ = Aggressive</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Max Speed (km/h)</label>
-                        <input type="number" id="max-speed" class="form-control" min="0" max="200" value="80" required>
+                        <input type="number" id="max-speed" class="form-control" min="0" max="200" value="55" required>
+                        <small class="text-muted">Peak speed during trip</small>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2">
                     <div class="form-group">
                         <label class="form-label">Average Acceleration (m/s²)</label>
-                        <input type="number" id="avg-accel" class="form-control" step="0.1" min="0" max="10" value="2.0" required>
+                        <input type="number" id="avg-accel" class="form-control" step="0.1" min="0" max="10" value="0.8" required>
+                        <small class="text-muted">0.3-1.0 = Eco, 1.0-2.0 = Normal, 2.0+ = Aggressive</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Average Braking (m/s²)</label>
-                        <input type="number" id="avg-brake" class="form-control" step="0.1" min="0" max="10" value="2.5" required>
+                        <input type="number" id="avg-brake" class="form-control" step="0.1" min="0" max="10" value="0.8" required>
+                        <small class="text-muted">0.3-1.0 = Eco, 1.0-2.0 = Normal, 2.0+ = Aggressive</small>
                     </div>
                 </div>
 
