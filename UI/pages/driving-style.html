@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Style Predictor - EV Route Optimizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path>
+            </svg>
+            <span>EV Optimizer</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="../index.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="trip-planner.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Trip Planner</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="driving-style.html" class="sidebar-nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Driving Style</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="battery-range.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="10" rx="2"></rect>
+                            <line x1="22" y1="11" x2="22" y2="13"></line>
+                        </svg>
+                        <span>Battery Range</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="route-optimizer.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v4a1 1 0 0 0 1 1h3"></path>
+                            <path d="M7 7v10"></path>
+                            <path d="M10 8v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1 -1v-8a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1z"></path>
+                            <path d="M17 7v4a1 1 0 0 0 1 1h3"></path>
+                            <path d="M21 7v10"></path>
+                        </svg>
+                        <span>Route Optimizer</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="energy-consumption.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+                        </svg>
+                        <span>Energy Consumption</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-primary" style="font-size: 2rem; margin-bottom: 0.5rem;">Driving Style Predictor</h1>
+                    <p class="text-secondary">Analyze your driving patterns and get personalized recommendations</p>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+        </header>
+
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <div class="grid grid-cols-2">
+            <!-- Input Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Enter Driving Metrics</h3>
+                </div>
+                <div class="card-body">
+                    <form id="driving-form" onsubmit="predictDrivingStyle(event)">
+                        <div class="form-group">
+                            <label class="form-label">Average Speed (km/h)</label>
+                            <input type="number" id="avg-speed" class="form-control" min="0" max="200" value="60" required>
+                            <small class="text-muted">Your typical cruising speed</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Maximum Speed (km/h)</label>
+                            <input type="number" id="max-speed" class="form-control" min="0" max="200" value="80" required>
+                            <small class="text-muted">Highest speed during your trips</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Average Acceleration (m/s²)</label>
+                            <input type="number" id="avg-accel" class="form-control" step="0.1" min="0" max="10" value="2.0" required>
+                            <small class="text-muted">How quickly you accelerate (0-3 typical)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Average Braking (m/s²)</label>
+                            <input type="number" id="avg-brake" class="form-control" step="0.1" min="0" max="10" value="2.5" required>
+                            <small class="text-muted">How hard you brake (0-3 typical)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Idle Time (%)</label>
+                            <input type="number" id="idle-time" class="form-control" min="0" max="100" value="15" required>
+                            <small class="text-muted">Percentage of trip spent idling</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" id="predict-btn">
+                            🔮 Predict Driving Style
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Prediction Results</h3>
+                </div>
+                <div class="card-body">
+                    <div id="results-display">
+                        <div class="text-center text-muted" style="padding: 3rem;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <p>Enter your driving metrics and click "Predict" to see your driving style analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Driving Style Explanations -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>Understanding Driving Styles</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🌱</div>
+                            <h4 style="color: var(--success); margin-bottom: 0.5rem;">Eco</h4>
+                            <p class="text-secondary">Gentle acceleration, smooth braking, consistent speeds</p>
+                            <p class="text-success"><strong>Energy Savings: 15-30%</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🚗</div>
+                            <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Normal</h4>
+                            <p class="text-secondary">Moderate acceleration, standard braking, varied speeds</p>
+                            <p class="text-primary"><strong>Baseline Consumption</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🏎️</div>
+                            <h4 style="color: var(--danger); margin-bottom: 0.5rem;">Aggressive</h4>
+                            <p class="text-secondary">Rapid acceleration, hard braking, high speeds</p>
+                            <p class="text-danger"><strong>Energy Usage: +20-40%</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/constants.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        async function predictDrivingStyle(event) {
+            event.preventDefault();
+
+            // Get simple input values
+            const avgSpeed = parseFloat(document.getElementById('avg-speed').value);
+            const maxSpeed = parseFloat(document.getElementById('max-speed').value);
+            const avgAccel = parseFloat(document.getElementById('avg-accel').value);
+            const avgBrake = parseFloat(document.getElementById('avg-brake').value);
+            const idleTime = parseFloat(document.getElementById('idle-time').value);
+
+            // Transform to backend expected format
+            const data = {
+                // Numeric features
+                distance_km: 50, // Default distance
+                elevation_gain_m: 100, // Default elevation
+                avg_speed: avgSpeed,
+                max_speed: maxSpeed,
+                acceleration_mean: avgAccel,
+                acceleration_std: avgAccel * 0.2, // Estimate std dev
+                braking_intensity: avgBrake / 10, // Normalize to 0-1 range
+                trip_duration_min: idleTime > 20 ? 60 : 30, // Estimate duration
+
+                // Categorical features (defaults)
+                vehicle_make: "MG",
+                vehicle_model: "ZS EV",
+                road_type: "city",
+                weather: "clear",
+                time_of_day: "evening"
+            };
+
+            const resultsDiv = document.getElementById('results-display');
+            const predictBtn = document.getElementById('predict-btn');
+
+            predictBtn.disabled = true;
+            showLoading('results-display');
+
+            try {
+                const result = await drivingAPI.predictDrivingStyle(data);
+                displayResults(result, {
+                    avgSpeed,
+                    maxSpeed,
+                    avgAccel,
+                    avgBrake,
+                    idleTime
+                });
+                showSuccess('Prediction completed successfully!');
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="text-center text-danger" style="padding: 3rem;">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p class="text-muted mt-2">Please check your backend server is running</p>
+                    </div>
+                `;
+                showError('Failed to predict driving style: ' + error.message);
+            } finally {
+                predictBtn.disabled = false;
+            }
+        }
+
+        function displayResults(result, inputData) {
+            const resultsDiv = document.getElementById('results-display');
+            const style = result.predicted_driving_style || 'Unknown';
+            const confidence = (result.confidence_score || 0) * 100;
+            const styleColor = getDrivingStyleColor(style);
+
+            // Calculate energy impact
+            let energyImpact = 0;
+            let impactText = '';
+            let recommendations = [];
+
+            if (style === 'Eco') {
+                energyImpact = -20;
+                impactText = '15-30% less energy';
+                recommendations.push('✅ Excellent! Keep up the eco-friendly driving');
+                recommendations.push('💚 Your driving style maximizes battery range');
+            } else if (style === 'Aggressive') {
+                energyImpact = 30;
+                impactText = '20-40% more energy';
+                recommendations.push('⚠️ Reduce rapid acceleration to save energy');
+                recommendations.push('🛑 Ease off braking - use regenerative braking more');
+                recommendations.push('🎯 Try to maintain consistent speeds');
+            } else {
+                energyImpact = 0;
+                impactText = 'Baseline consumption';
+                recommendations.push('✅ Good balanced driving');
+                recommendations.push('💡 Consider more eco-friendly techniques to save energy');
+            }
+
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">
+                        ${style === 'Eco' ? '🌱' : style === 'Aggressive' ? '🏎️' : '🚗'}
+                    </div>
+                    <h2 style="color: ${styleColor}; margin-bottom: 0.5rem;">${style}</h2>
+                    <p class="text-secondary">Driving Style</p>
+                    
+                    <div style="margin: 2rem 0;">
+                        <div class="progress" style="height: 12px;">
+                            <div class="progress-bar" style="width: ${confidence}%; background: ${styleColor};"></div>
+                        </div>
+                        <p class="text-muted mt-1">Confidence: ${formatPercentage(confidence)}</p>
+                    </div>
+
+                    <div class="grid gap-2 mt-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="text-muted mb-1">Energy Impact</p>
+                                <h3 style="color: ${energyImpact > 0 ? 'var(--danger)' : energyImpact < 0 ? 'var(--success)' : 'var(--primary)'}; margin: 0;">
+                                    ${energyImpact > 0 ? '+' : ''}${energyImpact}%
+                                </h3>
+                                <p class="text-secondary" style="font-size: 0.875rem;">${impactText}</p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body text-left">
+                                <p class="text-muted mb-2"><strong>Recommendations:</strong></p>
+                                <ul style="margin: 0; padding-left: 1.5rem;">
+                                    ${recommendations.map(r => `<li>${r}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-body text-left">
+                            <p class="text-muted mb-2"><strong>Your Metrics:</strong></p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <p class="text-secondary" style="margin: 0; font-size: 0.875rem;">Avg Speed</p>
+                                    <p style="margin: 0;"><strong>${inputData.avgSpeed} km/h</strong></p>
+                                </div>
+                                <div>
+                                    <p class="text-secondary" style="margin: 0; font-size: 0.875rem;">Max Speed</p>
+                                    <p style="margin: 0;"><strong>${inputData.maxSpeed} km/h</strong></p>
+                                </div>
+                                <div>
+                                    <p class="text-secondary" style="margin: 0; font-size: 0.875rem;">Acceleration</p>
+                                    <p style="margin: 0;"><strong>${inputData.avgAccel} m/s²</strong></p>
+                                </div>
+                                <div>
+                                    <p class="text-secondary" style="margin: 0; font-size: 0.875rem;">Braking</p>
+                                    <p style="margin: 0;"><strong>${inputData.avgBrake} m/s²</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>

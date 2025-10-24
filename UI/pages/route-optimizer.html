@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimizer - EV Route Optimizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path>
+            </svg>
+            <span>EV Optimizer</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item"><a href="../index.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>Dashboard</span></a></li>
+                <li class="sidebar-nav-item"><a href="trip-planner.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Trip Planner</span></a></li>
+                <li class="sidebar-nav-item"><a href="driving-style.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>Driving Style</span></a></li>
+                <li class="sidebar-nav-item"><a href="battery-range.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"></rect><line x1="22" y1="11" x2="22" y2="13"></line></svg><span>Battery Range</span></a></li>
+                <li class="sidebar-nav-item"><a href="route-optimizer.html" class="sidebar-nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v4a1 1 0 0 0 1 1h3"></path><path d="M7 7v10"></path><path d="M10 8v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1 -1v-8a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1z"></path><path d="M17 7v4a1 1 0 0 0 1 1h3"></path><path d="M21 7v10"></path></svg><span>Route Optimizer</span></a></li>
+                <li class="sidebar-nav-item"><a href="energy-consumption.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg><span>Energy Consumption</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-primary" style="font-size: 2rem; margin-bottom: 0.5rem;">Route Optimizer</h1>
+                    <p class="text-secondary">Find the most efficient route with charging stations</p>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+        </header>
+
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Plan Your Route - Step 1: Trip Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Start Location</label>
+                        <select id="start-city" class="form-select"><option value="">-- Select City --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Destination</label>
+                        <select id="end-city" class="form-select"><option value="">-- Select City --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vehicle</label>
+                        <select id="vehicle" class="form-select"><option value="">-- Select Vehicle --</option></select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Current Battery (%)</label>
+                        <input type="number" id="battery" class="form-control" min="0" max="100" value="80">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Road Type</label>
+                        <select id="road-type" class="form-select">
+                            <option value="city">🏙️ City</option>
+                            <option value="highway" selected>🛣️ Highway</option>
+                            <option value="rural">🌾 Rural</option>
+                            <option value="coastal">🌊 Coastal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Traffic Level</label>
+                        <select id="traffic-level" class="form-select">
+                            <option value="low">🟢 Low</option>
+                            <option value="medium" selected>🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Step 2: Driving Metrics</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Average Speed (km/h)</label>
+                        <input type="number" id="avg-speed" class="form-control" min="0" max="150" value="60">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Max Speed (km/h)</label>
+                        <input type="number" id="max-speed" class="form-control" min="0" max="180" value="80">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Avg Acceleration (m/s²)</label>
+                        <input type="number" id="avg-accel" class="form-control" step="0.1" min="0" max="5" value="1.2">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Avg Braking (m/s²)</label>
+                        <input type="number" id="avg-brake" class="form-control" step="0.1" min="0" max="5" value="1.5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Idle Time (%)</label>
+                        <input type="number" id="idle-time" class="form-control" min="0" max="100" value="15">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trip Duration (min)</label>
+                        <input type="number" id="trip-duration" class="form-control" min="1" value="60">
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="optimizeRoute()">🗺️ Optimize Route with AI</button>
+            </div>
+        </div>
+
+        <div id="results" class="hidden">
+            <!-- Results will be populated by JavaScript -->
+        </div>
+    </main>
+
+    <script src="../js/constants.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        let predictionResults = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            populateSelect('start-city', SRI_LANKAN_CITIES, 'name', 'name');
+            populateSelect('end-city', SRI_LANKAN_CITIES, 'name', 'name');
+            populateSelect('vehicle', VEHICLE_MODELS, 'name', 'name');
+        });
+
+        async function optimizeRoute() {
+            try {
+                // Validate inputs
+                if (!validateInputs()) return;
+
+                showLoading('results');
+                document.getElementById('results').classList.remove('hidden');
+
+                // Step 1: Get basic trip data
+                const tripData = getTripData();
+
+                // Step 2: Predict Driving Style
+                showStatus('Analyzing driving style...');
+                const drivingStyle = await predictDrivingStyle(tripData);
+                predictionResults.drivingStyle = drivingStyle;
+
+                // Step 3: Predict Energy Consumption
+                showStatus('Calculating energy consumption...');
+                const energy = await predictEnergy(tripData, drivingStyle);
+                predictionResults.energy = energy;
+
+                // Step 4: Predict Battery Range
+                showStatus('Estimating battery range...');
+                const batteryRange = await predictBatteryRange(tripData, energy);
+                predictionResults.batteryRange = batteryRange;
+
+                // Step 5: Predict Optimal Path
+                showStatus('Optimizing route...');
+                const optimalPath = await predictOptimalPath(tripData, drivingStyle, energy);
+                predictionResults.optimalPath = optimalPath;
+
+                // Display comprehensive results
+                displayResults(tripData);
+                showSuccess('Route optimized successfully with AI predictions!');
+
+            } catch (error) {
+                console.error('Optimization error:', error);
+                showError('Failed to optimize route: ' + error.message);
+                document.getElementById('results').innerHTML =
+                    `<div class="card"><div class="card-body"><p class="text-danger">Error: ${error.message}</p></div></div>`;
+            }
+        }
+
+        function validateInputs() {
+            const start = document.getElementById('start-city').value;
+            const end = document.getElementById('end-city').value;
+            const vehicle = document.getElementById('vehicle').value;
+
+            if (!start || !end || !vehicle) {
+                showError('Please fill all required fields');
+                return false;
+            }
+
+            if (start === end) {
+                showError('Start and destination must be different');
+                return false;
+            }
+
+            return true;
+        }
+
+        function getTripData() {
+            const start = document.getElementById('start-city').value;
+            const end = document.getElementById('end-city').value;
+            const vehicle = document.getElementById('vehicle').value;
+
+            const startCoords = getCityCoordinates(start);
+            const endCoords = getCityCoordinates(end);
+            const distance = calculateDistance(startCoords.lat, startCoords.lon, endCoords.lat, endCoords.lon);
+            const vehicleData = VEHICLE_MODELS.find(v => v.name === vehicle);
+
+            return {
+                startCity: start,
+                endCity: end,
+                startCoords,
+                endCoords,
+                distance,
+                vehicle,
+                vehicleData,
+                battery: parseFloat(document.getElementById('battery').value),
+                roadType: document.getElementById('road-type').value,
+                trafficLevel: document.getElementById('traffic-level').value,
+                avgSpeed: parseFloat(document.getElementById('avg-speed').value),
+                maxSpeed: parseFloat(document.getElementById('max-speed').value),
+                avgAccel: parseFloat(document.getElementById('avg-accel').value),
+                avgBrake: parseFloat(document.getElementById('avg-brake').value),
+                idleTime: parseFloat(document.getElementById('idle-time').value),
+                duration: parseFloat(document.getElementById('trip-duration').value)
+            };
+        }
+
+        async function predictDrivingStyle(tripData) {
+            // Transform to backend expected format
+            const drivingData = {
+                distance_km: tripData.distance,
+                elevation_gain_m: 0,
+                avg_speed: tripData.avgSpeed,
+                max_speed: tripData.maxSpeed,
+                acceleration_mean: tripData.avgAccel,
+                acceleration_std: tripData.avgAccel * 0.3,
+                braking_intensity: tripData.avgBrake,
+                trip_duration_min: tripData.duration,
+                vehicle_make: "MG",
+                vehicle_model: "ZS EV",
+                road_type: tripData.roadType,
+                weather: "clear",
+                time_of_day: "evening"
+            };
+
+            const result = await drivingAPI.predictDrivingStyle(drivingData);
+            return result.predicted_driving_style;
+        }
+
+        async function predictEnergy(tripData, drivingStyle) {
+            const energyData = {
+                distance_km: tripData.distance,
+                driving_style: drivingStyle,
+                road_type: tripData.roadType,
+                weather: "sunny",
+                elevation_gain_m: 0,
+                avg_speed: tripData.avgSpeed
+            };
+
+            return await energyAPI.predictConsumption(energyData);
+        }
+
+        async function predictBatteryRange(tripData, energy) {
+            const batteryData = {
+                battery_capacity_kWh: tripData.vehicleData.batteryCapacity,
+                battery_percent: tripData.battery,
+                efficiency_kWh_per_km: energy.efficiency_kWh_per_km
+            };
+
+            return await batteryAPI.predictRange(batteryData);
+        }
+
+        async function predictOptimalPath(tripData, drivingStyle, energy) {
+            const pathData = {
+                distance_km: tripData.distance,
+                road_type: tripData.roadType,
+                traffic_level: tripData.trafficLevel,
+                weather: "sunny",
+                driving_style: drivingStyle,
+                predicted_energy_kWh: energy.predicted_energy_kWh,
+                predicted_range_km: 0,
+                battery_remaining_percent: tripData.battery
+            };
+
+            return await optimalPathAPI.predictPath(pathData);
+        }
+
+        function displayResults(tripData) {
+            const resultsDiv = document.getElementById('results');
+
+            const canComplete = predictionResults.energy.predicted_energy_kWh <=
+                (tripData.battery / 100 * tripData.vehicleData.batteryCapacity);
+
+            const remainingBattery = tripData.battery -
+                (predictionResults.energy.predicted_energy_kWh / tripData.vehicleData.batteryCapacity * 100);
+
+            resultsDiv.innerHTML = `
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-4 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon">📍</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Distance</div>
+                            <div class="stat-value">${formatDistance(tripData.distance)}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Energy Needed</div>
+                            <div class="stat-value">${predictionResults.energy.predicted_energy_kWh.toFixed(2)} kWh</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚗</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Driving Style</div>
+                            <div class="stat-value">${getDrivingStyleBadge(predictionResults.drivingStyle)}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Est. Time</div>
+                            <div class="stat-value">${predictionResults.optimalPath.predicted_travel_time_hours?.toFixed(1) || 'N/A'} hrs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Predictions -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3>🤖 AI Model Predictions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid grid-cols-2">
+                            <div class="card" style="margin: 0.5rem;">
+                                <div class="card-header" style="background: var(--primary); color: white;">
+                                    <h4 style="margin: 0; font-size: 1rem;">1️⃣ Driving Style Prediction</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Predicted:</strong> ${getDrivingStyleBadge(predictionResults.drivingStyle)}</p>
+                                    <p class="text-muted" style="margin: 0; font-size: 0.875rem;">
+                                        Based on speed, acceleration, and braking patterns
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="card" style="margin: 0.5rem;">
+                                <div class="card-header" style="background: var(--success); color: white;">
+                                    <h4 style="margin: 0; font-size: 1rem;">2️⃣ Energy Consumption</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Energy:</strong> ${predictionResults.energy.predicted_energy_kWh.toFixed(2)} kWh</p>
+                                    <p><strong>Efficiency:</strong> ${predictionResults.energy.efficiency_kWh_per_km.toFixed(3)} kWh/km</p>
+                                    <p class="text-muted" style="margin: 0; font-size: 0.875rem;">
+                                        Distance: ${tripData.distance.toFixed(1)} km, ${predictionResults.drivingStyle} style, ${tripData.roadType} road
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="card" style="margin: 0.5rem;">
+                                <div class="card-header" style="background: var(--warning); color: white;">
+                                    <h4 style="margin: 0; font-size: 1rem;">3️⃣ Battery Range</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Predicted Range:</strong> ${predictionResults.batteryRange.predicted_range_km.toFixed(1)} km</p>
+                                    <p><strong>Available Energy:</strong> ${predictionResults.batteryRange.available_energy_kWh.toFixed(2)} kWh</p>
+                                    <p class="text-muted" style="margin: 0; font-size: 0.875rem;">
+                                        Battery: ${tripData.battery}% of ${tripData.vehicleData.batteryCapacity} kWh
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="card" style="margin: 0.5rem;">
+                                <div class="card-header" style="background: var(--info); color: white;">
+                                    <h4 style="margin: 0; font-size: 1rem;">4️⃣ Optimal Path</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Travel Time:</strong> ${predictionResults.optimalPath.predicted_travel_time_hours?.toFixed(2) || 'N/A'} hours</p>
+                                    <p class="text-muted" style="margin: 0; font-size: 0.875rem;">
+                                        Traffic: ${tripData.trafficLevel}, Weather conditions considered
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Route Details -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🗺️ Route Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="badge" style="background: var(--success); color: white;">START</div>
+                            <strong>${tripData.startCity}</strong>
+                        </div>
+                        
+                        <div class="ml-4 mb-3" style="border-left: 3px dashed var(--border); padding-left: 1rem;">
+                            <p><strong>Route Type:</strong> ${tripData.roadType.toUpperCase()}</p>
+                            <p><strong>Traffic:</strong> ${tripData.trafficLevel.toUpperCase()}</p>
+                            <p><strong>Vehicle:</strong> ${tripData.vehicle}</p>
+                            <p style="margin: 0;">
+                                <strong>Can Complete Trip:</strong> 
+                                <span class="${canComplete ? 'text-success' : 'text-danger'}">
+                                    ${canComplete ? '✓ YES' : '✗ NO - Charging Required'}
+                                </span>
+                            </p>
+                            ${!canComplete ? `
+                                <p class="text-warning mt-2">
+                                    ⚠️ You need ${(predictionResults.energy.predicted_energy_kWh - (tripData.battery / 100 * tripData.vehicleData.batteryCapacity)).toFixed(1)} kWh more energy. 
+                                    Please charge to at least ${Math.ceil((predictionResults.energy.predicted_energy_kWh / tripData.vehicleData.batteryCapacity) * 100)}%
+                                </p>
+                            ` : `
+                                <p class="text-success mt-2">
+                                    ✓ Estimated battery at destination: ${remainingBattery.toFixed(1)}%
+                                </p>
+                            `}
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <div class="badge" style="background: var(--danger); color: white;">END</div>
+                            <strong>${tripData.endCity}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showStatus(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="spinner"></div>
+                        <p class="mt-3">${message}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showLoading(elementId) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="spinner"></div>
+                        <p class="mt-3">Processing with AI models...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getDrivingStyleBadge(style) {
+            const colors = {
+                'Eco': 'var(--success)',
+                'Normal': 'var(--info)',
+                'Aggressive': 'var(--danger)'
+            };
+            return `<span class="badge" style="background: ${colors[style] || 'var(--secondary)'}; color: white;">${style}</span>`;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Route Optimizer - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path>
+            </svg>
+            <span>EV Optimizer</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="index.html" class="sidebar-nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="pages/trip-planner.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Trip Planner</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="pages/driving-style.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Driving Style</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="pages/battery-range.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="10" rx="2"></rect>
+                            <line x1="22" y1="11" x2="22" y2="13"></line>
+                            <line x1="6" y1="11" x2="6" y2="13"></line>
+                            <line x1="10" y1="11" x2="10" y2="13"></line>
+                            <line x1="14" y1="11" x2="14" y2="13"></line>
+                        </svg>
+                        <span>Battery Range</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="pages/route-optimizer.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v4a1 1 0 0 0 1 1h3"></path>
+                            <path d="M7 7v10"></path>
+                            <path d="M10 8v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1 -1v-8a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1z"></path>
+                            <path d="M17 7v4a1 1 0 0 0 1 1h3"></path>
+                            <path d="M21 7v10"></path>
+                        </svg>
+                        <span>Route Optimizer</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="pages/energy-consumption.html" class="sidebar-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+                        </svg>
+                        <span>Energy Consumption</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-primary" style="font-size: 2rem; margin-bottom: 0.5rem;">Dashboard</h1>
+                    <p class="text-secondary">Welcome to your EV Route Optimizer</p>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+        </header>
+
+        <!-- Alert Containers -->
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-4 mb-4">
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Trips</div>
+                    <div class="stat-value" id="total-trips">0</div>
+                    <div class="stat-trend positive">↑ 12%</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-content">
+                    <div class="stat-label">Energy Saved</div>
+                    <div class="stat-value" id="energy-saved">0 kWh</div>
+                    <div class="stat-trend positive">↑ 8%</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🔋</div>
+                <div class="stat-content">
+                    <div class="stat-label">Avg Range</div>
+                    <div class="stat-value" id="avg-range">0 km</div>
+                    <div class="stat-trend negative">↓ 3%</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🌱</div>
+                <div class="stat-content">
+                    <div class="stat-label">CO₂ Reduced</div>
+                    <div class="stat-value" id="co2-reduced">0 kg</div>
+                    <div class="stat-trend positive">↑ 15%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Weather -->
+        <div class="grid grid-cols-2 mb-4">
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="grid gap-2">
+                        <a href="pages/trip-planner.html" class="btn btn-primary btn-block">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg> Plan New Trip
+                        </a>
+                        <a href="pages/driving-style.html" class="btn btn-secondary btn-block">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg> Check Driving Style
+                        </a>
+                        <a href="pages/battery-range.html" class="btn btn-secondary btn-block">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="10" rx="2"></rect>
+                                <line x1="22" y1="11" x2="22" y2="13"></line>
+                            </svg> Calculate Range
+                        </a>
+                        <a href="pages/energy-consumption.html" class="btn btn-secondary btn-block">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+                            </svg> Analyze Energy
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Widget -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Current Weather</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Select City</label>
+                        <select id="city-select" class="form-select" onchange="loadWeather()">
+                            <option value="">-- Select City --</option>
+                        </select>
+                    </div>
+                    <div id="weather-display" class="mt-3">
+                        <p class="text-muted text-center">Select a city to view weather</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Vehicle Info -->
+        <div class="grid grid-cols-2">
+            <!-- Recent Trips -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Activity</h3>
+                </div>
+                <div class="card-body">
+                    <div id="recent-activity">
+                        <p class="text-muted text-center">No recent activity</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Models Info -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Available Vehicles</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Battery</th>
+                                    <th>Range</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vehicle-table">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/constants.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+
+        function initializeDashboard() {
+            // Populate city dropdown
+            populateSelect('city-select', SRI_LANKAN_CITIES, 'name', 'name');
+
+            // Populate vehicle table
+            populateVehicleTable();
+
+            // Load stats from storage
+            loadDashboardStats();
+
+            // Load recent activity
+            loadRecentActivity();
+        }
+
+        function populateVehicleTable() {
+            const tbody = document.getElementById('vehicle-table');
+            tbody.innerHTML = '';
+
+            VEHICLE_MODELS.forEach(vehicle => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${vehicle.name}</td>
+                    <td>${vehicle.batteryCapacity} kWh</td>
+                    <td>${vehicle.range} km</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function loadWeather() {
+            const citySelect = document.getElementById('city-select');
+            const cityName = citySelect.value;
+
+            if (!cityName) {
+                document.getElementById('weather-display').innerHTML =
+                    '<p class="text-muted text-center">Select a city to view weather</p>';
+                return;
+            }
+
+            const coords = getCityCoordinates(cityName);
+            if (!coords) return;
+
+            showLoading('weather-display');
+
+            try {
+                const weatherData = await weatherAPI.getWeather(coords.lat, coords.lon);
+                displayWeather(weatherData, cityName);
+            } catch (error) {
+                document.getElementById('weather-display').innerHTML =
+                    `<p class="text-danger">Failed to load weather: ${error.message}</p>`;
+            }
+        }
+
+        function displayWeather(data, cityName) {
+            const weatherDiv = document.getElementById('weather-display');
+            const temp = data.main ? .temp || 'N/A';
+            const description = data.weather ? .[0] ? .description || 'N/A';
+            const humidity = data.main ? .humidity || 'N/A';
+            const windSpeed = data.wind ? .speed || 'N/A';
+
+            weatherDiv.innerHTML = `
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <h4 style="font-size: 2rem; margin: 0;">${temp}°C</h4>
+                            <p class="text-muted" style="text-transform: capitalize;">${description}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-muted">💧 ${humidity}%</p>
+                            <p class="text-muted">💨 ${windSpeed} m/s</p>
+                        </div>
+                    </div>
+                    <p class="text-secondary mt-2">📍 ${cityName}</p>
+                </div>
+            `;
+        }
+
+        function loadDashboardStats() {
+            // Load stats from localStorage
+            const trips = getFromStorage('trips') || [];
+            document.getElementById('total-trips').textContent = trips.length;
+
+            // Calculate total energy saved
+            const totalEnergy = trips.reduce((sum, trip) => sum + (trip.energySaved || 0), 0);
+            document.getElementById('energy-saved').textContent = formatEnergy(totalEnergy);
+
+            // Calculate average range
+            const avgRange = trips.length > 0 ?
+                trips.reduce((sum, trip) => sum + (trip.range || 0), 0) / trips.length :
+                0;
+            document.getElementById('avg-range').textContent = formatDistance(avgRange);
+
+            // Calculate CO2 reduced (1 kWh saved = ~0.5 kg CO2)
+            const co2Reduced = totalEnergy * 0.5;
+            document.getElementById('co2-reduced').textContent = `${formatNumber(co2Reduced, 0)} kg`;
+        }
+
+        function loadRecentActivity() {
+            const activityDiv = document.getElementById('recent-activity');
+            const trips = getFromStorage('trips') || [];
+
+            if (trips.length === 0) {
+                activityDiv.innerHTML = '<p class="text-muted text-center">No recent activity</p>';
+                return;
+            }
+
+            // Show last 5 trips
+            const recentTrips = trips.slice(-5).reverse();
+            activityDiv.innerHTML = recentTrips.map(trip => `
+                <div class="flex justify-between items-center mb-2" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                    <div>
+                        <p style="margin: 0; font-weight: 500;">${trip.route || 'Trip'}</p>
+                        <p class="text-muted" style="margin: 0; font-size: 0.875rem;">${trip.date || 'Recent'}</p>
+                    </div>
+                    <div class="text-right">
+                        <p style="margin: 0; color: var(--primary);">${trip.distance || '0'} km</p>
+                        <p class="text-muted" style="margin: 0; font-size: 0.875rem;">${trip.energy || '0'} kWh</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>

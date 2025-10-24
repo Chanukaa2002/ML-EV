@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Consumption - EV Route Optimizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path>
+            </svg>
+            <span>EV Optimizer</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item"><a href="../index.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>Dashboard</span></a></li>
+                <li class="sidebar-nav-item"><a href="trip-planner.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Trip Planner</span></a></li>
+                <li class="sidebar-nav-item"><a href="driving-style.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>Driving Style</span></a></li>
+                <li class="sidebar-nav-item"><a href="battery-range.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"></rect><line x1="22" y1="11" x2="22" y2="13"></line></svg><span>Battery Range</span></a></li>
+                <li class="sidebar-nav-item"><a href="route-optimizer.html" class="sidebar-nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v4a1 1 0 0 0 1 1h3"></path><path d="M7 7v10"></path><path d="M10 8v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1 -1v-8a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1z"></path><path d="M17 7v4a1 1 0 0 0 1 1h3"></path><path d="M21 7v10"></path></svg><span>Route Optimizer</span></a></li>
+                <li class="sidebar-nav-item"><a href="energy-consumption.html" class="sidebar-nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg><span>Energy Consumption</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-primary" style="font-size: 2rem; margin-bottom: 0.5rem;">Energy Consumption Analyzer</h1>
+                    <p class="text-secondary">Analyze and optimize your energy usage</p>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+        </header>
+
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <div class="grid grid-cols-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Trip Parameters</h3>
+                </div>
+                <div class="card-body">
+                    <form id="energy-form" onsubmit="analyzeEnergy(event)">
+                        <div class="form-group">
+                            <label class="form-label">Vehicle Model</label>
+                            <select id="vehicle" class="form-select" required><option value="">-- Select Vehicle --</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Trip Distance (km)</label>
+                            <input type="number" id="distance" class="form-control" min="1" value="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Average Speed (km/h)</label>
+                            <input type="number" id="speed" class="form-control" min="1" max="200" value="60" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Driving Style</label>
+                            <select id="style" class="form-select" required>
+                                <option value="Eco">🌱 Eco</option>
+                                <option value="Normal" selected>🚗 Normal</option>
+                                <option value="Aggressive">🏎️ Aggressive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Climate Control</label>
+                            <select id="climate" class="form-select" required>
+                                <option value="off">Off</option>
+                                <option value="eco">Eco</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="max">Maximum</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">⚡ Analyze Consumption</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Energy Analysis</h3>
+                </div>
+                <div class="card-body">
+                    <div id="analysis-results">
+                        <div class="text-center text-muted" style="padding: 3rem;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem;">
+                                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+                            </svg>
+                            <p>Enter trip parameters to analyze energy consumption</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>Efficiency Tips</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 style="color: var(--success); margin-bottom: 1rem;">🌱 Eco Driving</h4>
+                            <ul style="margin: 0; padding-left: 1.5rem;">
+                                <li>Smooth acceleration</li>
+                                <li>Anticipate traffic</li>
+                                <li>Use regenerative braking</li>
+                                <li>Maintain steady speeds</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 style="color: var(--primary); margin-bottom: 1rem;">🔋 Battery Care</h4>
+                            <ul style="margin: 0; padding-left: 1.5rem;">
+                                <li>Keep battery 20-80%</li>
+                                <li>Avoid extreme temperatures</li>
+                                <li>Pre-condition while plugged</li>
+                                <li>Regular charging cycles</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 style="color: var(--warning); margin-bottom: 1rem;">⚡ Energy Saving</h4>
+                            <ul style="margin: 0; padding-left: 1.5rem;">
+                                <li>Minimize AC usage</li>
+                                <li>Reduce vehicle weight</li>
+                                <li>Check tire pressure</li>
+                                <li>Plan efficient routes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/constants.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            populateSelect('vehicle', VEHICLE_MODELS, 'name', 'name');
+        });
+
+        async function analyzeEnergy(event) {
+            event.preventDefault();
+
+            const vehicleName = document.getElementById('vehicle').value;
+            const distance = parseFloat(document.getElementById('distance').value);
+            const speed = parseFloat(document.getElementById('speed').value);
+            const style = document.getElementById('style').value;
+            const climate = document.getElementById('climate').value;
+
+            const vehicle = VEHICLE_MODELS.find(v => v.name === vehicleName);
+            if (!vehicle) {
+                showError('Please select a vehicle');
+                return;
+            }
+
+            try {
+                showLoading('analysis-results');
+
+                // Call backend API to predict energy consumption
+                const energyData = {
+                    distance_km: distance,
+                    driving_style: style,
+                    road_type: 'city', // Default
+                    weather: 'sunny', // Default - could be enhanced to use actual weather
+                    elevation_gain_m: 0, // Default
+                    avg_speed: speed
+                };
+
+                const energyResult = await energyAPI.predictConsumption(energyData);
+
+                if (!energyResult.success) {
+                    throw new Error(energyResult.error || 'Energy prediction failed');
+                }
+
+                const totalEnergy = energyResult.predicted_energy_kWh;
+                const efficiency = energyResult.efficiency_kWh_per_km;
+                const batteryUsed = (totalEnergy / vehicle.batteryCapacity) * 100;
+                const cost = totalEnergy * 0.10; // Assuming $0.10 per kWh
+
+                displayAnalysis({
+                    vehicle,
+                    distance,
+                    speed,
+                    style,
+                    climate,
+                    totalEnergy,
+                    batteryUsed,
+                    efficiency,
+                    cost,
+                    kmPerKwh: 1 / efficiency,
+                    energyResult
+                });
+
+                showSuccess('Energy consumption predicted by AI model');
+
+            } catch (error) {
+                console.error('Energy analysis error:', error);
+                showError('Failed to analyze energy: ' + error.message);
+                document.getElementById('analysis-results').innerHTML =
+                    `<div class="card"><div class="card-body"><p class="text-danger">Error: ${error.message}</p></div></div>`;
+            }
+        }
+
+        function displayAnalysis(data) {
+            const resultsDiv = document.getElementById('analysis-results');
+
+            resultsDiv.innerHTML = `
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-1">Total Energy (AI Predicted)</p>
+                            <h3 style="margin: 0; color: var(--primary);">${data.totalEnergy.toFixed(2)} kWh</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-1">Battery Used</p>
+                            <h3 style="margin: 0; color: ${data.batteryUsed > 80 ? 'var(--danger)' : 'var(--success)'};">
+                                ${formatPercentage(data.batteryUsed)}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-1">Efficiency</p>
+                            <h3 style="margin: 0;">${data.kmPerKwh.toFixed(2)} km/kWh</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-1">Estimated Cost</p>
+                            <h3 style="margin: 0; color: var(--success);">$${data.cost.toFixed(2)}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-muted mb-2"><strong>🤖 AI Model Analysis:</strong></p>
+                        <div class="grid gap-2">
+                            <div class="flex justify-between items-center">
+                                <span>Distance</span>
+                                <strong>${data.distance} km</strong>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Driving Style</span>
+                                <strong>${data.style}</strong>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Average Speed</span>
+                                <strong>${data.speed} km/h</strong>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Efficiency (Model)</span>
+                                <strong>${data.efficiency.toFixed(3)} kWh/km</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            <div class="flex justify-between items-center">
+                                <span>Speed (${data.speed} km/h)</span>
+                                <span class="${data.multipliers.speed > 1 ? 'text-warning' : 'text-success'}">
+                                    ${data.multipliers.speed > 1 ? '+' : ''}${((data.multipliers.speed - 1) * 100).toFixed(0)}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${data.batteryUsed > 80 ? `
+                    <div class="alert alert-warning mt-3">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span>⚠️ This trip will use most of your battery. Plan charging stops.</span>
+                    </div>
+                ` : ''}
+            `;
+
+            showSuccess('Analysis completed!');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>
