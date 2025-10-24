@@ -74,13 +74,28 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Climate Control</label>
-                            <select id="climate" class="form-select" required>
-                                <option value="off">Off</option>
-                                <option value="eco">Eco</option>
-                                <option value="normal" selected>Normal</option>
-                                <option value="max">Maximum</option>
+                            <label class="form-label">Road Type</label>
+                            <select id="road-type" class="form-select" required>
+                                <option value="city" selected>City</option>
+                                <option value="highway">Highway</option>
+                                <option value="rural">Rural</option>
+                                <option value="coastal">Coastal</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Weather Condition</label>
+                            <select id="weather" class="form-select" required>
+                                <option value="sunny" selected>Sunny</option>
+                                <option value="clear">Clear</option>
+                                <option value="cloudy">Cloudy</option>
+                                <option value="light_rain">Light Rain</option>
+                                <option value="heavy_rain">Heavy Rain</option>
+                                <option value="monsoon">Monsoon</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Elevation Gain (m)</label>
+                            <input type="number" id="elevation" class="form-control" min="0" max="2000" value="0" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">⚡ Analyze Consumption</button>
                     </form>
@@ -163,7 +178,9 @@
             const distance = parseFloat(document.getElementById('distance').value);
             const speed = parseFloat(document.getElementById('speed').value);
             const style = document.getElementById('style').value;
-            const climate = document.getElementById('climate').value;
+            const roadType = document.getElementById('road-type').value;
+            const weather = document.getElementById('weather').value;
+            const elevation = parseFloat(document.getElementById('elevation').value);
 
             const vehicle = VEHICLE_MODELS.find(v => v.name === vehicleName);
             if (!vehicle) {
@@ -174,13 +191,13 @@
             try {
                 showLoading('analysis-results');
 
-                // Call backend API to predict energy consumption
+                // Call backend API to predict energy consumption with all required fields
                 const energyData = {
                     distance_km: distance,
                     driving_style: style,
-                    road_type: 'city', // Default
-                    weather: 'sunny', // Default - could be enhanced to use actual weather
-                    elevation_gain_m: 0, // Default
+                    road_type: roadType,
+                    weather: weather,
+                    elevation_gain_m: elevation,
                     avg_speed: speed
                 };
 
@@ -271,15 +288,6 @@
                             <div class="flex justify-between items-center">
                                 <span>Efficiency (Model)</span>
                                 <strong>${data.efficiency.toFixed(3)} kWh/km</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                            <div class="flex justify-between items-center">
-                                <span>Speed (${data.speed} km/h)</span>
-                                <span class="${data.multipliers.speed > 1 ? 'text-warning' : 'text-success'}">
-                                    ${data.multipliers.speed > 1 ? '+' : ''}${((data.multipliers.speed - 1) * 100).toFixed(0)}%
-                                </span>
                             </div>
                         </div>
                     </div>

@@ -9,7 +9,7 @@ function showLoading(elementId) {
         element.innerHTML = `
             <div class="loading-spinner">
                 <div class="spinner"></div>
-                <p>Loading...</p>
+                <p>🤖 AI Thinking...</p>
             </div>
         `;
     }

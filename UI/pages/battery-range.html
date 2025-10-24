@@ -136,6 +136,17 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="form-label">Trip Distance (km)</label>
+                            <input type="number" id="trip-distance" class="form-control" min="1" max="500" value="100" required>
+                            <small class="text-muted">Estimated trip distance for energy calculation</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Average Speed (km/h)</label>
+                            <input type="number" id="avg-speed" class="form-control" min="1" max="200" value="60" required>
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-label">Driving Style</label>
                             <select id="driving-style" class="form-select" required>
                                 <option value="Eco">🌱 Eco (Best Range)</option>
@@ -145,28 +156,30 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Temperature (°C)</label>
-                            <input type="number" id="temperature" class="form-control" min="-20" max="50" value="25" required>
-                            <small class="text-muted">Extreme temperatures affect range</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Terrain</label>
-                            <select id="terrain" class="form-select" required>
-                                <option value="flat">⬆️ Flat (Best Range)</option>
-                                <option value="mixed" selected>↗️ Mixed (Moderate)</option>
-                                <option value="hilly">⛰️ Hilly (Reduced Range)</option>
+                            <label class="form-label">Road Type</label>
+                            <select id="road-type" class="form-select" required>
+                                <option value="city">City</option>
+                                <option value="highway" selected>Highway</option>
+                                <option value="rural">Rural</option>
+                                <option value="coastal">Coastal</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">AC/Climate Control</label>
-                            <select id="climate" class="form-select" required>
-                                <option value="off">Off</option>
-                                <option value="eco">Eco Mode</option>
-                                <option value="normal" selected>Normal</option>
-                                <option value="max">Maximum</option>
+                            <label class="form-label">Weather Condition</label>
+                            <select id="weather" class="form-select" required>
+                                <option value="sunny" selected>Sunny</option>
+                                <option value="clear">Clear</option>
+                                <option value="cloudy">Cloudy</option>
+                                <option value="light_rain">Light Rain</option>
+                                <option value="heavy_rain">Heavy Rain</option>
+                                <option value="monsoon">Monsoon</option>
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Elevation Gain (m)</label>
+                            <input type="number" id="elevation" class="form-control" min="0" max="2000" value="0" required>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block">
@@ -254,23 +267,24 @@
             }
 
             const batteryLevel = parseFloat(document.getElementById('battery-level').value);
+            const tripDistance = parseFloat(document.getElementById('trip-distance').value);
+            const avgSpeed = parseFloat(document.getElementById('avg-speed').value);
             const drivingStyle = document.getElementById('driving-style').value;
-            const temperature = parseFloat(document.getElementById('temperature').value);
-            const terrain = document.getElementById('terrain').value;
-            const climate = document.getElementById('climate').value;
+            const roadType = document.getElementById('road-type').value;
+            const weather = document.getElementById('weather').value;
+            const elevation = parseFloat(document.getElementById('elevation').value);
 
             try {
                 showLoading('range-results');
 
                 // Step 1: Get energy efficiency from energy prediction API
-                // We'll use a standard 100km trip to get the efficiency
                 const energyData = {
-                    distance_km: 100,
+                    distance_km: tripDistance,
                     driving_style: drivingStyle,
-                    road_type: terrain === 'flat' ? 'highway' : terrain === 'hilly' ? 'rural' : 'city',
-                    weather: temperature < 10 ? 'light_rain' : 'sunny',
-                    elevation_gain_m: terrain === 'hilly' ? 200 : 0,
-                    avg_speed: drivingStyle === 'Eco' ? 60 : drivingStyle === 'Aggressive' ? 90 : 70
+                    road_type: roadType,
+                    weather: weather,
+                    elevation_gain_m: elevation,
+                    avg_speed: avgSpeed
                 };
 
                 const energyResult = await energyAPI.predictConsumption(energyData);
@@ -302,9 +316,9 @@
                     availableEnergy: rangeResult.available_energy_kWh,
                     batteryLevel,
                     drivingStyle,
-                    temperature,
-                    terrain,
-                    climate,
+                    roadType,
+                    weather,
+                    elevation,
                     efficiency: energyResult.efficiency_kWh_per_km,
                     energyResult,
                     rangeResult
@@ -322,6 +336,9 @@
 
         function displayResults(data) {
             const resultsDiv = document.getElementById('range-results');
+
+            // Calculate impact percentage (difference from base range)
+            const impactPercent = ((data.estimatedRange - data.baseRange) / data.baseRange * 100).toFixed(0);
 
             resultsDiv.innerHTML = `
                 <div style="text-align: center; padding: 1rem;">
@@ -375,58 +392,22 @@
                                     <strong>${data.drivingStyle}</strong>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span>Temperature</span>
-                                    <strong>${data.temperature}°C</strong>
+                                    <span>Road Type</span>
+                                    <strong>${data.roadType}</strong>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span>Terrain</span>
-                                    <strong>${data.terrain}</strong>
+                                    <span>Weather</span>
+                                    <strong>${data.weather}</strong>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span>Climate Control</span>
-                                    <strong>${data.climate}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="text-muted mb-1">Total Impact</p>
-                                <h3 style="margin: 0; color: ${impactPercent >= 0 ? 'var(--success)' : 'var(--danger)'};">
-                                    ${impactPercent > 0 ? '+' : ''}${impactPercent}%
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card mt-3">
-                        <div class="card-body text-left">
-                            <p class="text-muted mb-2"><strong>Condition Impacts:</strong></p>
-                            <div class="grid gap-2">
-                                <div class="flex justify-between items-center">
-                                    <span>${data.drivingStyle} Driving</span>
-                                    <span class="${data.multipliers.style >= 1 ? 'text-success' : 'text-danger'}">
-                                        ${((data.multipliers.style - 1) * 100).toFixed(0)}%
-                                    </span>
+                                    <span>Elevation Gain</span>
+                                    <strong>${data.elevation} m</strong>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span>${data.temperature}°C Temperature</span>
-                                    <span class="${data.multipliers.temp >= 1 ? 'text-success' : 'text-danger'}">
-                                        ${((data.multipliers.temp - 1) * 100).toFixed(0)}%
-                                    </span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span>${data.terrain.charAt(0).toUpperCase() + data.terrain.slice(1)} Terrain</span>
-                                    <span class="${data.multipliers.terrain >= 1 ? 'text-success' : 'text-danger'}">
-                                        ${((data.multipliers.terrain - 1) * 100).toFixed(0)}%
-                                    </span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span>Climate: ${data.climate}</span>
-                                    <span class="${data.multipliers.climate >= 1 ? 'text-success' : 'text-danger'}">
-                                        ${((data.multipliers.climate - 1) * 100).toFixed(0)}%
-                                    </span>
+                                    <span>AI Impact on Range</span>
+                                    <strong class="${impactPercent >= 0 ? 'text-success' : 'text-danger'}">
+                                        ${impactPercent > 0 ? '+' : ''}${impactPercent}%
+                                    </strong>
                                 </div>
                             </div>
                         </div>
@@ -441,20 +422,23 @@
             const recs = [];
 
             if (data.drivingStyle === 'Aggressive') {
-                recs.push('Switch to Eco mode for 15% more range');
+                recs.push('🌱 Switch to Eco mode for better range');
             }
-            if (data.temperature < 10 || data.temperature > 35) {
-                recs.push('Pre-condition vehicle while charging');
+            if (data.elevation > 500) {
+                recs.push('⛰️ High elevation reduces range - plan charging stops');
             }
-            if (data.climate === 'max') {
-                recs.push('Use Eco climate mode to save energy');
+            if (data.weather === 'heavy_rain' || data.weather === 'monsoon') {
+                recs.push('🌧️ Bad weather affects range - drive carefully');
+            }
+            if (data.roadType === 'city') {
+                recs.push('🏙️ City driving uses more energy - highway is more efficient');
             }
             if (data.batteryLevel < 30) {
-                recs.push('Charge before long trips for optimal range');
+                recs.push('⚡ Charge before long trips for optimal range');
             }
 
             if (recs.length === 0) {
-                recs.push('Conditions are optimal for maximum range');
+                recs.push('✅ Conditions are optimal for maximum range');
             }
 
             return `

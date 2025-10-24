@@ -173,7 +173,7 @@
 
                 // Step 5: Predict Optimal Path
                 showStatus('Optimizing route...');
-                const optimalPath = await predictOptimalPath(tripData, drivingStyle, energy);
+                const optimalPath = await predictOptimalPath(tripData, drivingStyle, energy, batteryRange);
                 predictionResults.optimalPath = optimalPath;
 
                 // Display comprehensive results
@@ -281,7 +281,7 @@
             return await batteryAPI.predictRange(batteryData);
         }
 
-        async function predictOptimalPath(tripData, drivingStyle, energy) {
+        async function predictOptimalPath(tripData, drivingStyle, energy, batteryRange) {
             const pathData = {
                 distance_km: tripData.distance,
                 road_type: tripData.roadType,
@@ -289,7 +289,7 @@
                 weather: "sunny",
                 driving_style: drivingStyle,
                 predicted_energy_kWh: energy.predicted_energy_kWh,
-                predicted_range_km: 0,
+                predicted_range_km: batteryRange.predicted_range_km,
                 battery_remaining_percent: tripData.battery
             };
 

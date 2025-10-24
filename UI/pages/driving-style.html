@@ -109,6 +109,18 @@
                 <div class="card-body">
                     <form id="driving-form" onsubmit="predictDrivingStyle(event)">
                         <div class="form-group">
+                            <label class="form-label">Distance (km)</label>
+                            <input type="number" id="distance" class="form-control" min="1" max="500" value="50" required>
+                            <small class="text-muted">Trip distance</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Elevation Gain (m)</label>
+                            <input type="number" id="elevation" class="form-control" min="0" max="2000" value="100" required>
+                            <small class="text-muted">Height difference on your route</small>
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-label">Average Speed (km/h)</label>
                             <input type="number" id="avg-speed" class="form-control" min="0" max="200" value="60" required>
                             <small class="text-muted">Your typical cruising speed</small>
@@ -133,9 +145,58 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Idle Time (%)</label>
-                            <input type="number" id="idle-time" class="form-control" min="0" max="100" value="15" required>
-                            <small class="text-muted">Percentage of trip spent idling</small>
+                            <label class="form-label">Trip Duration (minutes)</label>
+                            <input type="number" id="trip-duration" class="form-control" min="1" max="600" value="60" required>
+                            <small class="text-muted">How long your trip takes</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Vehicle Make</label>
+                            <select id="vehicle-make" class="form-select" required>
+                                <option value="MG">MG</option>
+                                <option value="Tesla">Tesla</option>
+                                <option value="Nissan">Nissan</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Vehicle Model</label>
+                            <select id="vehicle-model" class="form-select" required>
+                                <option value="ZS EV">ZS EV</option>
+                                <option value="Model 3">Model 3</option>
+                                <option value="Leaf">Leaf</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Road Type</label>
+                            <select id="road-type" class="form-select" required>
+                                <option value="city">City</option>
+                                <option value="highway">Highway</option>
+                                <option value="rural">Rural</option>
+                                <option value="coastal">Coastal</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Weather Condition</label>
+                            <select id="weather" class="form-select" required>
+                                <option value="clear">Clear</option>
+                                <option value="sunny">Sunny</option>
+                                <option value="cloudy">Cloudy</option>
+                                <option value="light_rain">Light Rain</option>
+                                <option value="heavy_rain">Heavy Rain</option>
+                                <option value="monsoon">Monsoon</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Time of Day</label>
+                            <select id="time-of-day" class="form-select" required>
+                                <option value="morning">Morning</option>
+                                <option value="evening">Evening</option>
+                                <option value="night">Night</option>
+                            </select>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block" id="predict-btn">
@@ -209,31 +270,35 @@
         async function predictDrivingStyle(event) {
             event.preventDefault();
 
-            // Get simple input values
+            // Get all input values from form
+            const distance = parseFloat(document.getElementById('distance').value);
+            const elevation = parseFloat(document.getElementById('elevation').value);
             const avgSpeed = parseFloat(document.getElementById('avg-speed').value);
             const maxSpeed = parseFloat(document.getElementById('max-speed').value);
             const avgAccel = parseFloat(document.getElementById('avg-accel').value);
             const avgBrake = parseFloat(document.getElementById('avg-brake').value);
-            const idleTime = parseFloat(document.getElementById('idle-time').value);
+            const tripDuration = parseFloat(document.getElementById('trip-duration').value);
+            const vehicleMake = document.getElementById('vehicle-make').value;
+            const vehicleModel = document.getElementById('vehicle-model').value;
+            const roadType = document.getElementById('road-type').value;
+            const weather = document.getElementById('weather').value;
+            const timeOfDay = document.getElementById('time-of-day').value;
 
-            // Transform to backend expected format
+            // Build data object matching backend requirements
             const data = {
-                // Numeric features
-                distance_km: 50, // Default distance
-                elevation_gain_m: 100, // Default elevation
+                distance_km: distance,
+                elevation_gain_m: elevation,
                 avg_speed: avgSpeed,
                 max_speed: maxSpeed,
                 acceleration_mean: avgAccel,
-                acceleration_std: avgAccel * 0.2, // Estimate std dev
-                braking_intensity: avgBrake / 10, // Normalize to 0-1 range
-                trip_duration_min: idleTime > 20 ? 60 : 30, // Estimate duration
-
-                // Categorical features (defaults)
-                vehicle_make: "MG",
-                vehicle_model: "ZS EV",
-                road_type: "city",
-                weather: "clear",
-                time_of_day: "evening"
+                acceleration_std: avgAccel * 0.3, // Estimate std dev as 30% of mean
+                braking_intensity: avgBrake,
+                trip_duration_min: tripDuration,
+                vehicle_make: vehicleMake,
+                vehicle_model: vehicleModel,
+                road_type: roadType,
+                weather: weather,
+                time_of_day: timeOfDay
             };
 
             const resultsDiv = document.getElementById('results-display');
@@ -248,8 +313,7 @@
                     avgSpeed,
                     maxSpeed,
                     avgAccel,
-                    avgBrake,
-                    idleTime
+                    avgBrake
                 });
                 showSuccess('Prediction completed successfully!');
             } catch (error) {
