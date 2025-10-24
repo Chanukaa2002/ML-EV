@@ -55,7 +55,7 @@ def sample_od():
     return o, d, distance, elev_gain
 
 # -----------------------------
-N_TRIPS = 10000  # number of synthetic trips
+N_TRIPS = 50000  # number of synthetic trips
 
 # 1) Driving Style Dataset
 driving_rows = []
